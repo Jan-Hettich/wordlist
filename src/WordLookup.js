@@ -16,17 +16,24 @@ class WordLookup extends Component {
   }
 
   callAPI(firstLetters) {
-    const url = "https://api.datamuse.com/words?sp=" + firstLetters + "*&max=20";
-    console.log(url);
-    axios.get(url)
+    // const url = "https://api.datamuse.com/words?sp=" + firstLetters + "*&max=20";
+    axios({
+      method: 'get',
+      baseURL: 'https://api.datamuse.com',
+      url: '/words',
+      params: {
+        sp: firstLetters + '*',
+        max: 20
+      },
+      responseType: 'json',
+    })
       .then(this.apiCallback)
       .catch((error) => console.log(error));
   }
 
-  apiCallback = (api_response) => {
-    //console.log(api_response);
-    const {data} = api_response;
-    const words = data.reduce((acc,{word}) => acc.concat(word), []);
+  apiCallback = ({data, status, statusText, headers, config, request}) => {
+    console.log(status, statusText, headers, config, request);
+    const words = data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
   }
 
