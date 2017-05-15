@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import WordList from './WordList';
+import WordList from './WordLookup';
 import './App.css';
 
 class App extends Component {

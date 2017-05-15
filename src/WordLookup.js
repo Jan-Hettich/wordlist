@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './WordList.css';
+import './WordLookup.css';
 
 class WordList extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class WordList extends Component {
 
   render(props) {
     return (
-      <form className="WordList">
+      <form className="WordLookup">
         <label>
           Find words beginning with:
           <input
