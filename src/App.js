@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import WordList from './WordLookup';
+import React, {Component} from 'react';
+import WordLookup from './WordLookup';
 import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <WordList />
+        <WordLookup />
       </div>
     );
   }
