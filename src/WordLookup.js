@@ -6,16 +6,18 @@ import './WordLookup.css';
 class WordLookup extends Component {
   constructor(props) {
     super(props);
-    this.state = {firstLetters: "", words: []};
+    this.state = {firstLetters:  "", words: []};
+    this.lastSeqRequest = 0;
+    this.lastSeqResponse = 0;
   }
 
-  textChanged = (event) => {
+  textChanged(event) {
     const firstLetters = event.target.value;
     this.setState({firstLetters: firstLetters});
-    this.callAPI(firstLetters);
+    this.callApi(firstLetters);
   }
 
-  callAPI(firstLetters) {
+  callApi(firstLetters) {
     // const url = "https://api.datamuse.com/words?sp=" + firstLetters + "*&max=20";
     axios({
       method: 'get',
@@ -23,16 +25,22 @@ class WordLookup extends Component {
       url: '/words',
       params: {
         sp: firstLetters + '*',
-        max: 20
+        max: 20,
+        seq: ++this.lastSeqRequest
       },
       responseType: 'json',
     })
-      .then(this.apiCallback)
+      .then((...args) => this.apiCallback(...args))
       .catch((error) => console.log(error));
   }
 
-  apiCallback = ({data, status, statusText, headers, config, request}) => {
+  apiCallback({data, status, statusText, headers, config, request}) {
     console.log(status, statusText, headers, config, request);
+    const {params: {seq}} = config;
+    if (seq <= this.lastSeqResponse) {
+      throw new Error(`discarding response received out of order (${seq})`);
+    }
+    this.lastSeqResponse = seq;
     const words = data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
   }
@@ -45,7 +53,7 @@ class WordLookup extends Component {
           <input
             type="text"
             value={this.state.firstLetters}
-            onChange={this.textChanged}/>
+            onChange={(...args) => this.textChanged(...args)}/>
         </label>
         <ul>
           {this.state.words.map((word) => (
