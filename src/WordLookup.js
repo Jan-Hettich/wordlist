@@ -11,7 +11,7 @@ class WordLookup extends Component {
     this.lastSeqResponse = 0;
   }
 
-  textChanged(event) {
+  textChanged = (event) => {
     const firstLetters = event.target.value;
     this.setState({firstLetters: firstLetters});
     this.callApi(firstLetters);
@@ -30,11 +30,11 @@ class WordLookup extends Component {
       },
       responseType: 'json',
     })
-      .then((...args) => this.apiCallback(...args))
+      .then(this.apiCallback)
       .catch((error) => console.log(error));
   }
 
-  apiCallback({data, status, statusText, headers, config, request}) {
+  apiCallback = ({data, status, statusText, headers, config, request}) => {
     console.log(status, statusText, headers, config, request);
     const {params: {seq}} = config;
     if (seq <= this.lastSeqResponse) {
@@ -53,7 +53,7 @@ class WordLookup extends Component {
           <input
             type="text"
             value={this.state.firstLetters}
-            onChange={(...args) => this.textChanged(...args)}/>
+            onChange={this.textChanged}/>
         </label>
         <ul>
           {this.state.words.map((word) => (
