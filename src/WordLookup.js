@@ -7,8 +7,6 @@ class WordLookup extends Component {
   constructor(props) {
     super(props);
     this.state = {firstLetters: "", words: []};
-    this.lastRequest = 0;
-    this.lastResponse = 0;
   }
 
   render() {
@@ -51,7 +49,6 @@ class WordLookup extends Component {
       url: '/words',
       params: params,
       responseType: 'json',
-      requestNumber: ++this.lastRequest,
     });
   }
 
@@ -62,16 +59,8 @@ class WordLookup extends Component {
 
   apiCallback = (api_response) => {
     console.log("api_response: ", api_response);
-    this.checkResponseOrder(api_response);
     const words = api_response.data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
-  }
-
-  checkResponseOrder = ({config: {params: {sp}, requestNumber}}) => {
-    if (requestNumber <= this.lastResponse) {
-      throw new Error(`discarding response received out of order for: ${sp}`);
-    }
-    return this.lastResponse = requestNumber;
   }
 
 }
