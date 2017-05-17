@@ -34,16 +34,16 @@ class WordLookup extends Component {
     const firstLetters = event.target.value;
     console.log(`firstLetters:  ${firstLetters}`);
     this.setState({firstLetters: firstLetters});
-    this.updateFromApi(firstLetters);
+    this.apiGetWords(firstLetters);
   }
 
-  updateFromApi = (startOfWord) =>
-    this.sendApiRequest(startOfWord)
+  apiGetWords = (startOfWord) =>
+    this.apiSendRequest(startOfWord)
       .then((result1) => this.delay(result1, 1000, ()=>startOfWord.endsWith('d')))
       .then((result2) => this.apiCallback(result2))
       .catch((error) => console.log(error));
 
-  sendApiRequest = (startOfWord) => {
+  apiSendRequest = (startOfWord) => {
     const params = startOfWord.length > 0 ? {sp: startOfWord + '*', max: 20} : {}
     return axios({
       method: 'get',
