@@ -7,6 +7,8 @@ class WordLookup extends Component {
   constructor(props) {
     super(props);
     this.state = {firstLetters: "", words: []};
+    this.lastRequest = 0;
+    this.lastResponse = 0;
   }
 
   render() {
@@ -35,12 +37,12 @@ class WordLookup extends Component {
   }
 
   updateFromApi = (startOfWord) =>
-    this.callApi(startOfWord)
+    this.sendApiRequest(startOfWord)
       .then((result1) => this.delay(result1, 1000, ()=>startOfWord.endsWith('d')))
       .then((result2) => this.apiCallback(result2))
       .catch((error) => console.log(error));
 
-  callApi = (startOfWord) =>
+  sendApiRequest = (startOfWord) =>
     axios({
       method: 'get',
       baseURL: 'https://api.datamuse.com',
@@ -50,6 +52,7 @@ class WordLookup extends Component {
         max: 20,
       },
       responseType: 'json',
+      requestNumber: ++this.lastRequest,
     });
 
   delay = (result1, ms, condition) => {
@@ -59,8 +62,17 @@ class WordLookup extends Component {
 
   apiCallback = (api_response) => {
     console.log("api_response: ", api_response);
+    const {config: {requestNumber}} = api_response;
+    this.checkResponseOrder(requestNumber);
     const words = api_response.data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
+  }
+
+  checkResponseOrder = (requestNumber) => {
+    if (requestNumber <= this.lastResponse) {
+    throw new Error(`discarding response received out of order: ${requestNumber}`);
+    }
+    return this.lastResponse = requestNumber;
   }
 
 }
