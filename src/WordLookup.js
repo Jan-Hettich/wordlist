@@ -32,6 +32,7 @@ class WordLookup extends Component {
 
   textChanged = (event) => {
     const firstLetters = event.target.value;
+    console.log(`firstLetters:  ${firstLetters}`);
     this.setState({firstLetters: firstLetters});
     this.updateFromApi(firstLetters);
   }
@@ -42,18 +43,17 @@ class WordLookup extends Component {
       .then((result2) => this.apiCallback(result2))
       .catch((error) => console.log(error));
 
-  sendApiRequest = (startOfWord) =>
-    axios({
+  sendApiRequest = (startOfWord) => {
+    const params = startOfWord.length > 0 ? {sp: startOfWord + '*', max: 20} : {}
+    return axios({
       method: 'get',
       baseURL: 'https://api.datamuse.com',
       url: '/words',
-      params: {
-        sp: startOfWord + '*',
-        max: 20,
-      },
+      params: params,
       responseType: 'json',
       requestNumber: ++this.lastRequest,
     });
+  }
 
   delay = (result1, ms, condition) => {
     ms = condition() ? ms : 0;
