@@ -1,3 +1,16 @@
+## Example React app to explore best practices around API integration:
+
+- use of promises
+- synchronization issues
+- called from action handlers
+
+The initial version is implemented in a single component: WordLookup.  This should be split up into
+container and visual components, the state pushed into the Redux store, and the API calls put into their
+own module.  We will also evaluate the pros/cons of this implementation using ES6 promises vs.using Redux
+store "middlewares".
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
