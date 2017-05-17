@@ -36,6 +36,7 @@ class WordLookup extends Component {
 
   updateFromApi = (startOfWord) =>
     this.callApi(startOfWord)
+      .then((result1) => this.delay(result1, 1000, ()=>startOfWord.endsWith('d')))
       .then((result2) => this.apiCallback(result2))
       .catch((error) => console.log(error));
 
@@ -50,6 +51,11 @@ class WordLookup extends Component {
       },
       responseType: 'json',
     });
+
+  delay = (result1, ms, condition) => {
+    ms = condition() ? ms : 0;
+    return new Promise((resolve, reject) => setTimeout(() => resolve(result1), ms));
+  }
 
   apiCallback = (api_response) => {
     console.log("api_response: ", api_response);
