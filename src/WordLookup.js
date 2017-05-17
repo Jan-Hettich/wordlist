@@ -39,7 +39,7 @@ class WordLookup extends Component {
 
   apiGetWords = (startOfWord) =>
     this.apiSendRequest(startOfWord)
-      .then((result1) => this.delay(result1, 1000, ()=>startOfWord.endsWith('d')))
+      .then((result1) => this.delay(result1, 1000, () => startOfWord.endsWith('d')))
       .then((result2) => this.apiCallback(result2))
       .catch((error) => console.log(error));
 
@@ -62,15 +62,14 @@ class WordLookup extends Component {
 
   apiCallback = (api_response) => {
     console.log("api_response: ", api_response);
-    const {config: {requestNumber}} = api_response;
-    this.checkResponseOrder(requestNumber);
+    this.checkResponseOrder(api_response);
     const words = api_response.data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
   }
 
-  checkResponseOrder = (requestNumber) => {
+  checkResponseOrder = ({config: {params: {sp}, requestNumber}}) => {
     if (requestNumber <= this.lastResponse) {
-    throw new Error(`discarding response received out of order: ${requestNumber}`);
+      throw new Error(`discarding response received out of order for: ${sp}`);
     }
     return this.lastResponse = requestNumber;
   }
