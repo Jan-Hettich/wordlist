@@ -34,7 +34,12 @@ class WordLookup extends Component {
     this.updateFromApi(firstLetters);
   }
 
-  updateFromApi(startOfWord) {
+  updateFromApi = (startOfWord) =>
+    this.callApi(startOfWord)
+      .then((result2) => this.apiCallback(result2))
+      .catch((error) => console.log(error));
+
+  callApi = (startOfWord) =>
     axios({
       method: 'get',
       baseURL: 'https://api.datamuse.com',
@@ -44,10 +49,7 @@ class WordLookup extends Component {
         max: 20,
       },
       responseType: 'json',
-    })
-      .then((result2) => this.apiCallback(result2))
-      .catch((error) => console.log(error));
-  }
+    });
 
   apiCallback = (api_response) => {
     console.log("api_response: ", api_response);
