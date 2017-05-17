@@ -6,7 +6,7 @@ import './WordLookup.css';
 class WordLookup extends Component {
   constructor(props) {
     super(props);
-    this.state = {firstLetters:  "", words: []};
+    this.state = {firstLetters: "", words: []};
     this.lastSeqRequest = 0;
     this.lastSeqResponse = 0;
   }
@@ -17,32 +17,43 @@ class WordLookup extends Component {
     this.callApi(firstLetters);
   }
 
-  callApi(firstLetters) {
-    // const url = "https://api.datamuse.com/words?sp=" + firstLetters + "*&max=20";
-    axios({
-      method: 'get',
-      baseURL: 'https://api.datamuse.com',
-      url: '/words',
-      params: {
-        sp: firstLetters + '*',
-        max: 20,
-        seq: ++this.lastSeqRequest
-      },
-      responseType: 'json',
-    })
-      .then(this.apiCallback)
+  callApi(startOfWord) {
+    this.delay(1000, () => startOfWord.endsWith('d'))
+      .then(() => {
+        console.log("axios");
+        return axios({
+          method: 'get',
+          baseURL: 'https://api.datamuse.com',
+          url: '/words',
+          params: {
+            sp: startOfWord + '*',
+            max: 20,
+            seq: ++this.lastSeqRequest
+          },
+          responseType: 'json',
+        });
+      })
+      .then((api_response) => this.apiCallback(api_response))
       .catch((error) => console.log(error));
   }
 
   apiCallback = ({data, status, statusText, headers, config, request}) => {
-    console.log(status, statusText, headers, config, request);
+    // console.log(status, statusText, headers, config, request);
+    console.log("apiCallback");
     const {params: {seq}} = config;
+    console.log(`seq: ${seq}, lastSeqResponse: ${this.lastSeqResponse}`);
     if (seq <= this.lastSeqResponse) {
       throw new Error(`discarding response received out of order (${seq})`);
     }
     this.lastSeqResponse = seq;
     const words = data.reduce((acc, {word}) => acc.concat(word), []);
     this.setState(...this.state, {words})
+  }
+
+  delay = (ms, condition) => {
+    console.log("delay");
+    ms = condition() ? ms : 0;
+    return new Promise((resolve, reject) => setTimeout(resolve, ms));
   }
 
   render() {
@@ -66,3 +77,20 @@ class WordLookup extends Component {
 }
 
 export default WordLookup;
+
+// fetchWithAxios = (firstLetters) => {
+//   console.log('fetchWithAxios called');
+//   const p = axios({ // "https://api.datamuse.com/words?sp=" + firstLetters + "*&max=20";
+//     method: 'get',
+//     baseURL: 'https://api.datamuse.com',
+//     url: '/words',
+//     params: {
+//       sp: firstLetters + '*',
+//       max: 20,
+//       seq: ++this.lastSeqRequest
+//     },
+//     responseType: 'json',
+//   });
+//   console.log(typeof p);
+//   return p;
+// }
