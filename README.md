@@ -9,7 +9,7 @@ container and visual components, the state pushed into the Redux store, and the 
 own module.  We will also evaluate the pros/cons of this implementation using ES6 promises vs.using Redux
 store "middlewares".
 
-
+ES6 version on CodePen:  https://codepen.io/jhettich/pen/RVepEa?editors=0111
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
