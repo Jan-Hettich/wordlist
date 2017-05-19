@@ -11,6 +11,8 @@ store "middlewares".
 
 ES6 version on CodePen:  https://codepen.io/jhettich/pen/RVepEa?editors=0111
 
+Note:  https://www.quora.com/Is-a-monad-really-a-monoid-in-the-category-of-endofunctors
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
