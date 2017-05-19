@@ -12,7 +12,7 @@ store "middlewares".
 ES6 version on CodePen:  https://codepen.io/jhettich/pen/RVepEa?editors=0111
 
 Notes:  
-http://exploringjs.com/es6/ch_promises.html#sec_overview-promises
+http://exploringjs.com/es6/ch_promises.html#sec_overview-promises <br>
 https://www.quora.com/Is-a-monad-really-a-monoid-in-the-category-of-endofunctors
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
