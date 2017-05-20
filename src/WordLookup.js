@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import uuid from 'uuid';
-import axios from 'axios';
+import {apiGetWords} from './Api'
 import SearchForm from './SearchForm';
 import WordList from './WordList';
 import './WordLookup.css';
@@ -9,8 +8,6 @@ class WordLookup extends Component {
   constructor(props) {
     super(props);
     this.state = {firstLetters: "", words: []};
-    this.lastRequest = 0;
-    this.lastResponse = 0;
   }
 
   render() {
@@ -26,46 +23,10 @@ class WordLookup extends Component {
     const firstLetters = event.target.value;
     console.log(`firstLetters:  ${firstLetters}`);
     this.setState({firstLetters: firstLetters});
-    this.apiGetWords(firstLetters);
-  }
-
-  apiGetWords = (startOfWord) =>
-    this.apiSendRequest(startOfWord)
-      .then((result1) => this.delay(result1, 1000, () => startOfWord.endsWith('d')))
-      .then((result2) => this.apiCallback(result2))
+    apiGetWords(firstLetters)
+      .then(({words}) => this.setState({...this.state, words}))
       .catch((error) => console.log(error));
-
-  apiSendRequest = (startOfWord) => {
-    const params = startOfWord.length > 0 ? {sp: startOfWord + '*', max: 20} : {}
-    return axios({
-      method: 'get',
-      baseURL: 'https://api.datamuse.com',
-      url: '/words',
-      params: params,
-      responseType: 'json',
-      requestNumber: ++this.lastRequest,
-    });
   }
-
-  delay = (result1, ms, condition) => {
-    ms = condition() ? ms : 0;
-    return new Promise((resolve, reject) => setTimeout(() => resolve(result1), ms));
-  }
-
-  apiCallback = (api_response) => {
-    console.log("api_response: ", api_response);
-    this.checkResponseOrder(api_response);
-    const words = api_response.data.reduce((acc, {word}) => acc.concat(word), []);
-    this.setState(...this.state, {words})
-  }
-
-  checkResponseOrder = ({config: {params: {sp}, requestNumber}}) => {
-    if (requestNumber <= this.lastResponse) {
-      throw new Error(`discarding response received out of order for: ${sp}`);
-    }
-    return this.lastResponse = requestNumber;
-  }
-
 }
 
 export default WordLookup;
