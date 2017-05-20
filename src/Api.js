@@ -6,7 +6,21 @@ import axios from 'axios';
 function apiGetWords(startOfWord) {
   return apiSendRequest(startOfWord)
     .then((raw_response) => delay(raw_response, 1000, () => startOfWord.endsWith('d')))
-    .then((raw_response) => apiResponse(raw_response));
+    .then((raw_response)=> discardIfOutOfOrder(raw_response))
+    .then((raw_response) => formatResponse(raw_response));
+}
+
+function formatResponse(raw_response) {
+  console.log("raw_response: ", raw_response);
+  return new Promise((resolve, reject) => {
+    try {
+      const words = raw_response.data.reduce((acc, {word}) => acc.concat(word), []);
+      resolve({words});
+    }
+    catch (error) {
+      reject(error);
+    }
+  });
 }
 
 let lastRequest = 0;
@@ -29,25 +43,17 @@ function delay(_, ms, condition) {
   return new Promise((resolve) => setTimeout(() => resolve(_), ms));
 }
 
-function apiResponse(raw_response) {
-  console.log("raw_response: ", raw_response);
+function discardIfOutOfOrder(raw_response) {
   return new Promise((resolve, reject) => {
-    try {
-      checkResponseOrder(raw_response);
-      const words = raw_response.data.reduce((acc, {word}) => acc.concat(word), []);
-      resolve({words});
+    const {config: {params: {sp}, requestNumber}} = raw_response;
+    if (requestNumber <= lastResponse) {
+      reject(new Error(`discarding response received out of order for: ${sp}`));
     }
-    catch (error) {
-      reject(error);
+    else {
+      lastResponse = requestNumber;
+      resolve(raw_response);
     }
   });
-}
-
-function checkResponseOrder({config: {params: {sp}, requestNumber}}) {
-  if (requestNumber <= lastResponse) {
-    throw new Error(`discarding response received out of order for: ${sp}`);
-  }
-  return lastResponse = requestNumber;
 }
 
 export {apiGetWords};
