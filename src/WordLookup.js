@@ -21,7 +21,6 @@ class WordLookup extends Component {
 
   firstLettersChanged = (event) => {
     const firstLetters = event.target.value;
-    console.log(`firstLetters:  ${firstLetters}`);
     this.setState({firstLetters: firstLetters});
     apiGetWords(firstLetters)
       .then(({words}) => this.setState({...this.state, words}))
