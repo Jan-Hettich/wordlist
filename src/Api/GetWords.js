@@ -1,4 +1,4 @@
-import apiSendRequest from './Api';
+import apiSendRequest from './AxiosWrapper';
 
 function apiGetWords(startOfWord) {
   return apiSendRequest(formatRequest(startOfWord))
