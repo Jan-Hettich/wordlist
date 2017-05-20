@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import uuid from 'uuid';
 import axios from 'axios';
+import SearchForm from './SearchForm';
+import WordList from './WordList';
 import './WordLookup.css';
 
 class WordLookup extends Component {
@@ -13,24 +15,14 @@ class WordLookup extends Component {
 
   render() {
     return (
-      <form className="WordLookup">
-        <label>
-          Find words beginning with:
-          <input
-            type="text"
-            value={this.state.firstLetters}
-            onChange={this.textChanged}/>
-        </label>
-        <ul>
-          {this.state.words.map((word) => (
-            <li key={uuid.v4()}>{word}</li>
-          ))}
-        </ul>
-      </form>
+      <div>
+        <SearchForm firstLetters={this.state.firstLetters} callback={this.firstLettersChanged} />
+        <WordList words={this.state.words} />
+      </div>
     );
   }
 
-  textChanged = (event) => {
+  firstLettersChanged = (event) => {
     const firstLetters = event.target.value;
     console.log(`firstLetters:  ${firstLetters}`);
     this.setState({firstLetters: firstLetters});
