@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {apiGetWords} from './Api'
+import apiGetWords from './Api/GetWords'
 import SearchForm from './SearchForm';
 import WordList from './WordList';
 import './WordLookup.css';
@@ -24,7 +24,7 @@ class WordLookup extends Component {
     this.setState({firstLetters: firstLetters});
     apiGetWords(firstLetters)
       .then(({words}) => this.setState({...this.state, words}))
-      .catch((error) => console.log("Error!", error));
+      .catch((error) => console.log(error));
   }
 }
 
