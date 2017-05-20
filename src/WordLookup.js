@@ -24,7 +24,7 @@ class WordLookup extends Component {
     this.setState({firstLetters: firstLetters});
     apiGetWords(firstLetters)
       .then(({words}) => this.setState({...this.state, words}))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log("Error!", error));
   }
 }
 
