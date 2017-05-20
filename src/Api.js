@@ -1,23 +1,24 @@
 import axios from 'axios';
 
 function apiGetWords(startOfWord) {
+  return apiSendRequest(formatRequest(startOfWord))
+    .then((raw_response) => formatResponse(raw_response))
+}
+
+function formatRequest(startOfWord) {
   const params = startOfWord.length > 0 ? {sp: startOfWord + '*', max: 20} : {}
-  const request = {
+  return {
     method: 'get',
     baseURL: 'https://api.datamuse.com',
     url: '/words',
     params: params,
     responseType: 'json',
   }
-  return apiSendRequest(request)
-    .then((raw_response) => formatResponse(raw_response))
 }
 
 function formatResponse(raw_response) {
-  return new Promise((resolve, reject) => {
-    const words = raw_response.data.reduce((acc, {word}) => acc.concat(word), []);
-    resolve({words});
-  });
+  const words = raw_response.data.reduce((acc, {word}) => acc.concat(word), []);
+  return {words};
 }
 
 let lastRequest = 0;
@@ -37,14 +38,12 @@ function artificialDelay(raw_response) {
 }
 
 function discardIfOutOfOrder(raw_response) {
-  return new Promise((resolve, reject) => {
     const {config: {params: {sp}, requestNumber}} = raw_response;
     if (requestNumber <= lastResponse) {
       throw new Error(`discarding response received out of order for: ${sp}`);
     }
     lastResponse = requestNumber;
-    resolve(raw_response);
-  });
+    return raw_response;
 }
 
 export {apiGetWords};
